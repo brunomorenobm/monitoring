@@ -1,6 +1,13 @@
 version: '2.1'
 
 services:
+  elasticsearch_exporter:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
+    command:
+      - '--es.uri=https://booscar:Bru%24urfer66@search.booscar.app'
+    restart: always
+    ports:
+    - "127.0.0.1:9114:9114"
 
   nodeexporter:
     image: prom/node-exporter:v0.18.1

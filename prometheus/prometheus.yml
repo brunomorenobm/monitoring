@@ -33,6 +33,18 @@ scrape_configs:
     honor_labels: true
     static_configs:
       - targets: ['pushgateway:9091']
+  
+  - job_name: 'opensearch'
+    scrape_interval: 30s
+    honor_labels: true
+    static_configs:
+      - targets: ['monitoring-elasticsearch_exporter-1:9114']
+
+  - job_name: 'kafka'
+    scrape_interval: 30s
+    honor_labels: true
+    static_configs:
+      - targets: ['monitoring-kafka_exporter-1:9308']
 
 
 alerting:

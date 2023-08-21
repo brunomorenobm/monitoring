@@ -95,6 +95,8 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
+    ports:
+      - "3000:3000"
     expose:
       - 3000
     networks:
@@ -113,21 +115,31 @@ services:
     labels:
       org.label-schema.group: "monitoring"
 
-  caddy:
-    image: stefanprodan/caddy
-    container_name: caddy
-    ports:
-      - "3000:3000"
-      - "9090:9090"
-      - "9093:9093"
-      - "9091:9091"
-    volumes:
-      - ./caddy:/etc/caddy
-    environment:
-      - ADMIN_USER=${ADMIN_USER}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-    restart: unless-stopped
+  elasticsearch_exporter:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
+    command:
+      - '--es.uri=https://booscar:Bru%24urfer66@search.booscar.app'
+    restart: always
+    expose:
+      - 9114
     networks:
       - monitor-net
     labels:
-      org.label-schema.group: "monitoring"
+      org.label-schema.group: "monitoring"      
+
+  kafka_exporter:
+    image: danielqsj/kafka-exporter:latest
+    ports:
+      - "9308:9308"
+    networks:
+      - monitor-net
+    command: --sasl.username=scrappy --sasl.password=booscar_scrappy --sasl.mechanism=PLAIN --sasl.enabled --kafka.server=ec2-35-78-117-157.ap-northeast-1.compute.amazonaws.com:29092
+    deploy:
+      mode: replicated
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M      
+      replicas: 1
+      endpoint_mode: vip
